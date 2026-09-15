@@ -1,0 +1,28 @@
+yaml
+name: Build EXE
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build
+        run: |
+          pyinstaller --noconfirm --onefile --windowed --name QuietFish --collect-all pygame --hidden-import pyaudio --collect-binaries pyaudio main.py
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuietFish-exe
+          path: dist/QuietFish.exe
